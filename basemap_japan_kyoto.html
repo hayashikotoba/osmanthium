@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Osmmanthium</title>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@3.2.1/dist/maplibre-gl.css' crossorigin="anonymous">
+    <script src='https://unpkg.com/maplibre-gl@3.2.1/dist/maplibre-gl.js' crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/pmtiles@2.5.0/dist/index.js"></script>
+
+    <style>
+        body { margin: 0; padding: 0; }
+        html, body, #map { height: 100% }
+    </style>
+
+    <script src="transportation.js"></script>
+</head>
+
+<body>
+    <div id="map"></div>
+    <script>
+        maplibregl.addProtocol("pmtiles", new pmtiles.Protocol().tile);
+    
+        const roadTilesKyoto = "pmtiles://basemap_japan_kyoto.pmtiles";
+        const centerLatLongKyoto = [135.7000, 35.0000];
+        const map = new maplibregl.Map({
+            center: centerLatLongKyoto,
+            zoom: 16,
+            container: 'map',
+            antialias: true,
+            minZoom: 14,
+            maxZoom: 18,
+            hash: true,
+            style: {
+                version: 8,
+                glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
+                sources: {
+                    roads: {
+                        type: "vector",
+                        url:  roadTilesKyoto
+                    },
+                },
+                layers: [
+                    {
+                        "id": "background",
+                        "type": "background",
+                        "minzoom": 0,
+                        "maxzoom": 24,
+                        "paint": {
+                            "background-color": "hsl(221,39%,26%)"
+                        }
+                    },
+                    // Overture Transportation Layers
+                    TRANSPORTATION.footwayCasing,
+                    TRANSPORTATION.footway,
+                    TRANSPORTATION.parkingAisleUnknownCasing,
+                    TRANSPORTATION.residentialCasing,
+                    TRANSPORTATION.secondaryTertiaryCasing,
+                    TRANSPORTATION.primaryCasing,
+                    TRANSPORTATION.parkingAisleUnknown,
+                    TRANSPORTATION.residential,
+                    TRANSPORTATION.secondaryTertiary,
+                    TRANSPORTATION.primary,
+                    TRANSPORTATION.motorwayCasing,
+                    TRANSPORTATION.motorway,
+                    TRANSPORTATION.residentialLabel,
+                    TRANSPORTATION.highwayLabel,
+                ]
+            }
+        });
+    </script>
+</body>
+</html>
